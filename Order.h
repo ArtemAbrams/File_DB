@@ -68,12 +68,11 @@ int insertOrder(struct Client client, struct Order order, char * error)
         } else {
             order.Id = 1;
         }
-        printf("Your order id is %d \n", order.Id);
         int dbSize = ftell(database);
         order.selfAddress = dbSize;
         order.nextAddress = dbSize;
     }
-
+    printf("Your order id is %d \n", order.Id);
     fwrite(&order, ORDER_SIZE, 1, database);
     if (!client.orderCount) {
         client.orderFirstAddress = order.selfAddress;
