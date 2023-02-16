@@ -126,6 +126,7 @@ int main()
                     scanf("%d", &id);
                     if(checkIfRecordExist(client, id,error))
                     {
+                        getOrder(client, &order, id, error);
                         deleteOrder(client,order, error);
                         printf("Deleted was successfully \n");
                     }

@@ -48,7 +48,7 @@ int insertOrder(struct Client client, struct Order order, char * error)
 {
     FILE* database = fopen(ORDER_DATA, "a+b");
     FILE* garbageZone = fopen(ORDER_GARBAGE, "a+b");
-    int garbageCount;
+    int garbageCount = 0;
     fscanf(garbageZone, "%d", &garbageCount);
     order.exists=1;
     struct Order order1;
@@ -59,7 +59,8 @@ int insertOrder(struct Client client, struct Order order, char * error)
         database = fopen(ORDER_DATA, "r+b");
         fseek(database, order.selfAddress, SEEK_SET);
     }
-    else {
+    else
+    {
         if (ftell(database) != 0) {
             fseek(database, -(ORDER_SIZE), SEEK_END);
             fread(&order1, ORDER_SIZE, 1, database);
@@ -153,7 +154,8 @@ void relinkAddresses(FILE* database, struct Order previous, struct Order order, 
     }
 }
 
-void deleteOrder(struct Client client, struct Order order, char* error) {
+void deleteOrder(struct Client client, struct Order order, char* error)
+        {
     FILE* database = fopen(ORDER_DATA, "r+b");
     struct Order previous;
     fseek(database, client.orderFirstAddress, SEEK_SET);
@@ -162,7 +164,6 @@ void deleteOrder(struct Client client, struct Order order, char* error) {
         fseek(database, previous.nextAddress, SEEK_SET);
     }
     while (previous.nextAddress != order.selfAddress && order.selfAddress != client.orderFirstAddress);
-
     relinkAddresses(database, previous, order, &client);
     noteDeletedOrder(order.selfAddress);
     order.exists = 0;
