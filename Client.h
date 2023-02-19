@@ -194,11 +194,7 @@ int deleteClient(int id, char* error) {
      getClient(&client, indexer.id, error);
      endIndex = indexer.id;
      int id = 0;
-     if (endIndex <= 0)
-     {
-         printf("No clients");
-         return 1;
-     }
+     int count =0;
      while(id < endIndex)
      {
          fseek(indexTable, id *INDEXER_SIZE, SEEK_SET);
@@ -209,8 +205,13 @@ int deleteClient(int id, char* error) {
              getClient(&client, indexer.id, error);
              printf("Id %d\n", client.id);
              OutputClient(client);
+             count++;
          }
          id++;
+     }
+     if(count == 0)
+     {
+         printf("No clients\n");
      }
      return 1;
  }
