@@ -21,7 +21,7 @@ void NextAddress(FILE* database, struct Client *client, struct Order *order)
     struct Order previous;
     fseek(database, client->orderFirstAddress, SEEK_SET);
     previous = FindLastAddress(database, client, &previous);
-    previous.nextAddress = order->nextAddress;
+    previous.nextAddress = order->selfAddress;
     fwrite(&previous, ORDER_SIZE, 1, database);
 }
 void overwriteGarbageAddress(int garbageCount, FILE* garbageZone, struct Order* record) {
@@ -51,9 +51,11 @@ int insertOrder(struct Client client, struct Order order, char * error)
     int garbageCount = 0;
     fscanf(garbageZone, "%d", &garbageCount);
     order.exists=1;
+    fscanf(garbageZone, "%d", &garbageCount);
     struct Order order1;
     fseek(database, 0, SEEK_END);
-    if (garbageCount) {
+    if (garbageCount)
+    {
         overwriteGarbageAddress(garbageCount, garbageZone, &order);
         fclose(database);
         database = fopen(ORDER_DATA, "r+b");
@@ -65,19 +67,24 @@ int insertOrder(struct Client client, struct Order order, char * error)
             fseek(database, -(ORDER_SIZE), SEEK_END);
             fread(&order1, ORDER_SIZE, 1, database);
             order.Id = order1.Id + 1;
-        } else {
+        }
+        else
+        {
             order.Id = 1;
         }
         int dbSize = ftell(database);
         order.selfAddress = dbSize;
         order.nextAddress = dbSize;
     }
+    fseek(database, 0, SEEK_END);
     printf("Your order id is %d \n", order.Id);
     fwrite(&order, ORDER_SIZE, 1, database);
-    if (!client.orderCount) {
+    if (!client.orderCount)
+    {
         client.orderFirstAddress = order.selfAddress;
     }
-    else {
+    else
+    {
         NextAddress(database, &client, &order);
     }
     fclose(database);

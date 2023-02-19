@@ -161,6 +161,7 @@ int deleteClient(int id, char* error) {
     fwrite(&indexer, INDEXER_SIZE, 1, indexTable);
     fclose(indexTable);
     listOfDeletedClient(id);
+
     if (client.orderCount != 0) {
         printf("tut");
         FILE* crewDb = fopen(Client_DATA, "r+b");

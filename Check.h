@@ -79,12 +79,12 @@ void info() {
         {
             clientCount++;
             orderCount += client.orderCount;
-            printf("Train #%d has %d crews\n", i, client.orderCount);
+            printf("Client #%d has %d orders\n", i, client.orderCount);
         }
     }
     fclose(indexTable);
-    printf("Total trains: %d\n", clientCount);
-    printf("Total crews: %d\n", orderCount);
+    printf("Total clients: %d\n", clientCount);
+    printf("Total orders: %d\n", orderCount);
 }
 
 

@@ -39,6 +39,7 @@ int main()
             case 2:
                 printf("Enter ID: \n");
                 scanf("%d", &id);
+                getClient(&client, id, error);
                 inputClient(&client);
                 if(updateClient(client, error, id)==0)
                     printf("%s", error);
@@ -62,6 +63,7 @@ int main()
                 if(getClient(&client, id, error) != 0)
                 {
                     InputOrder(&order);
+                    order.ClientId = client.id;
                     insertOrder(client, order, error);
                     printf("Insert was successfully \n");
                 }
