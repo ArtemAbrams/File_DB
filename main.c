@@ -17,7 +17,7 @@ int main()
         int choice;
         int id;
         char error[20];
-        printf("Acceptable Options:\n0 Insert Client\n1 Get Client\n2 Update Client\n3 Delete Client\n4 Print List of Clients\n5 Insert Order\n6 Get Order\n7 Update Order\n8 Delete Order \n9 Output List of Orders\n10 Exit\n");
+        printf("Acceptable Options:\n0 Insert Client\n1 Get Client\n2 Update Client\n3 Delete Client\n4 Print List of Clients\n5 Insert Order\n6 Get Order\n7 Update Order\n8 Delete Order \n9 Output List of Orders\n10 Info\n11 Exit\n");
         scanf("%d", &choice);
         switch (choice) {
             case 0:
@@ -160,6 +160,9 @@ int main()
                 }
                 break;
             case 10:
+                info();
+                break;
+            case 11:
                 return 0;
             default:
                 printf("No command :( \n");

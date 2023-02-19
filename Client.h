@@ -154,15 +154,15 @@ int deleteClient(int id, char* error) {
     fread(&indexer, INDEXER_SIZE, 1, indexTable);
     if(checkRecordExists(indexer, error)==0)
         return 0;
+    struct Client client;
+    getClient(&client, id, error);
     indexer.exists = 0;
     fseek(indexTable, (id - 1) * INDEXER_SIZE, SEEK_SET);
     fwrite(&indexer, INDEXER_SIZE, 1, indexTable);
     fclose(indexTable);
     listOfDeletedClient(id);
-    struct Client client;
-    getClient(&client, id, error);
-
-    if (client.orderCount) {
+    if (client.orderCount != 0) {
+        printf("tut");
         FILE* crewDb = fopen(Client_DATA, "r+b");
         struct Order order;
         fseek(crewDb, client.orderFirstAddress, SEEK_SET);
