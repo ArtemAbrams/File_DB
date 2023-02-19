@@ -51,7 +51,6 @@ int insertOrder(struct Client client, struct Order order, char * error)
     int garbageCount = 0;
     fscanf(garbageZone, "%d", &garbageCount);
     order.exists=1;
-    fscanf(garbageZone, "%d", &garbageCount);
     struct Order order1;
     fseek(database, 0, SEEK_END);
     if (garbageCount)
