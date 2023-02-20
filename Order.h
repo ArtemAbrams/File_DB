@@ -10,7 +10,7 @@ struct Order FindLastAddress(FILE *database, struct Client *client, struct Order
         {
     for (int i = 0; i < client->orderCount; i++) {
         fread(previous, ORDER_SIZE, 1, database);
-        fseek(database, (*previous).nextAddress, SEEK_SET);
+        fseek(database, previous->nextAddress, SEEK_SET);
     }
     return (*previous);
 }
@@ -25,22 +25,20 @@ void NextAddress(FILE* database, struct Client *client, struct Order *order)
     fwrite(&previous, ORDER_SIZE, 1, database);
 }
 void overwriteGarbageAddress(int garbageCount, FILE* garbageZone, struct Order* record) {
-    long * deletedIds = malloc(garbageCount * sizeof(long));
+    int * deletedIds = malloc(garbageCount * sizeof(int));
     for (int i = 0; i < garbageCount; i++) {
-        fscanf(garbageZone, "%ld", deletedIds + i);
+        fscanf(garbageZone, "%d", deletedIds + i);
     }
 
     record->selfAddress = deletedIds[0];
     record->nextAddress = deletedIds[0];
-
     fclose(garbageZone);
-    fopen(ORDER_GARBAGE, "wb");
+    garbageZone = fopen(ORDER_GARBAGE, "wb");
     fprintf(garbageZone, "%d", garbageCount - 1);
-
-    for (int i = 1; i < garbageCount; i++) {
-        fprintf(garbageZone, " %ld", deletedIds[i]);
+    for (int i = 1; i < garbageCount; i++)
+    {
+        fprintf(garbageZone, " %d", deletedIds[i]);
     }
-
     free(deletedIds);
     fclose(garbageZone);
 }
@@ -53,9 +51,15 @@ int insertOrder(struct Client client, struct Order order, char * error)
     order.exists=1;
     struct Order order1;
     fseek(database, 0, SEEK_END);
-    if (garbageCount)
+    if (garbageCount != 0)
     {
         overwriteGarbageAddress(garbageCount, garbageZone, &order);
+        fclose(database);
+        //database = fopen(ORDER_DATA, "r+b");
+        database = fopen(ORDER_DATA, "rb");
+        fseek(database, order.selfAddress, SEEK_SET);
+        fread(&order1, ORDER_SIZE, 1, database);
+        order.Id= order1.Id;
         fclose(database);
         database = fopen(ORDER_DATA, "r+b");
         fseek(database, order.selfAddress, SEEK_SET);
@@ -74,8 +78,8 @@ int insertOrder(struct Client client, struct Order order, char * error)
         int dbSize = ftell(database);
         order.selfAddress = dbSize;
         order.nextAddress = dbSize;
+        fseek(database, 0, SEEK_END);
     }
-    fseek(database, 0, SEEK_END);
     printf("Your order id is %d \n", order.Id);
     fwrite(&order, ORDER_SIZE, 1, database);
     if (!client.orderCount)
@@ -118,25 +122,24 @@ int updateOrder(struct Order order)
     fclose(database);
     return 1;
 }
-void noteDeletedOrder(long address) {
+void noteDeletedOrder(int address)
+{
     FILE* garbageZone = fopen(ORDER_GARBAGE, "rb");
     int garbageCount;
     fscanf(garbageZone, "%d", &garbageCount);
-    long* deletedAddresses = malloc(garbageCount * sizeof(long));
+    int* deletedAddresses = malloc(garbageCount * sizeof(long));
 
     for (int i = 0; i < garbageCount; i++) {
-        fscanf(garbageZone, "%ld", deletedAddresses + i);
+        fscanf(garbageZone, "%d", deletedAddresses + i);
     }
-
     fclose(garbageZone);
     garbageZone = fopen(ORDER_GARBAGE, "wb");
     fprintf(garbageZone, "%d", garbageCount + 1);
-
     for (int i = 0; i < garbageCount; i++) {
-        fprintf(garbageZone, " %ld", deletedAddresses[i]);
+        fprintf(garbageZone, " %d", deletedAddresses[i]);
     }
 
-    fprintf(garbageZone, " %ld", address);
+    fprintf(garbageZone, " %d", address);
     free(deletedAddresses);
     fclose(garbageZone);
 }

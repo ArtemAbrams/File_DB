@@ -7,6 +7,6 @@ struct Order
     int complete;
     char date[10];
     int exists;
-    long selfAddress;
-    long nextAddress;
+    int selfAddress;
+    int nextAddress;
 };

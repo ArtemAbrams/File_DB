@@ -10,7 +10,7 @@ struct Client
     char password[20];
     char birthday[10];
     int orderCount;
-    long orderFirstAddress;
+    int orderFirstAddress;
 };
 struct Indexer
 {

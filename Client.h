@@ -15,7 +15,8 @@
 #define ORDER_SIZE sizeof(struct Order)
 #define ORDER_DATA "order.fl"
 int PrintListOfClient(char *error);
-void overwriteGarbageClientElement(int garbageCount, FILE* garbageZone, struct Client* client) {
+void overwriteGarbageClientElement(int garbageCount, FILE* garbageZone, struct Client* client)
+        {
     int* deleteIdsFile = malloc(garbageCount * sizeof(int));
     for (int i = 0; i < garbageCount; i++)
     {
@@ -161,20 +162,19 @@ int deleteClient(int id, char* error) {
     fwrite(&indexer, INDEXER_SIZE, 1, indexTable);
     fclose(indexTable);
     listOfDeletedClient(id);
-
     if (client.orderCount != 0) {
-        printf("tut");
-        FILE* crewDb = fopen(Client_DATA, "r+b");
+        FILE* orderDb = fopen(ORDER_DATA, "r+b");
         struct Order order;
-        fseek(crewDb, client.orderFirstAddress, SEEK_SET);
-        for (int i = 0; i < order.countOfProduct; i++) {
-            fread(&order, ORDER_SIZE, 1, crewDb);
-            fclose(crewDb);
+        fseek(orderDb, client.orderFirstAddress, SEEK_SET);
+        for (int i = 0; i < client.orderCount; i++)
+        {
+            fread(&order, ORDER_SIZE, 1, orderDb);
+            fclose(orderDb);
             deleteOrder(client, order, error);
-            crewDb = fopen(ORDER_DATA, "r+b");
-            fseek(crewDb, order.nextAddress, SEEK_SET);
+            orderDb = fopen(ORDER_DATA, "r+b");
+            fseek(orderDb, order.nextAddress, SEEK_SET);
         }
-        fclose(crewDb);
+        fclose(orderDb);
     }
     return 1;
 }
